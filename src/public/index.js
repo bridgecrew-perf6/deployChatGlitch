@@ -3,25 +3,36 @@ const socket = io();
 let user;
 let chatbox = document.getElementById('chatbox');
 
+Swal.fire({
+    title:"Identificate",
+    input:"text",
+    text:"Ingresa el nombre de usario que utilizarás en el chat",
+    inputValidator: (value) => {
+        return !value && "¡Necesitas identificarte!"
+    },
+    allowOutsideClick:false
+}).then(result => {
+    user=result.value;
+    socket.emit('registered',user);
+});
+
+
 socket.on('newUser', (data) =>{
-    Swal.fire({
-        title:"Identificate",
-        input:"text",
-        text:"Ingresa el nombre de usario que utilizarás en el chat",
-        inputValidator: (value) => {
-            return !value && "¡Necesitas identificarte!"
-        },
-        allowOutsideClick:false
-    }).then(result => {
-        user=result.value;
-    });
+        //alert("New user");
+    
+    // Swal.fire({
+    //     icon:"success",
+    //     text:"Usuario nuevo conectado",
+    //     toast:true,
+    //     position:"top-right",
+    // })
 })
 
-socket.on('log', (data) => {
-    let log = document.getElementById('log');
+socket.on('log', data=>{
+    let log = document.getElementById('log')
     let messages = "";
-    data.forEach(message => {
-        messages = messages+ `${message.user} dice: ${message.message}` `<br>`;
+    data.forEach(message=>{
+        messages  = messages+ `${message.user} dice: ${message.message}</br>`;
     })
     log.innerHTML = messages;
 })
